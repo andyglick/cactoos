@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,9 +24,13 @@
 package org.cactoos.collection;
 
 import java.io.IOException;
+import java.util.AbstractCollection;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import org.cactoos.Text;
 import org.cactoos.iterable.IterableOf;
+import org.cactoos.iterator.Endless;
 import org.cactoos.text.TextOf;
 import org.cactoos.text.UpperText;
 import org.hamcrest.MatcherAssert;
@@ -39,6 +43,7 @@ import org.junit.Test;
  * @version $Id$
  * @since 0.14
  * @checkstyle JavadocMethodCheck (500 lines)
+ * @checkstyle MagicNumberCheck (500 lines)
  */
 public final class MappedTest {
 
@@ -75,6 +80,38 @@ public final class MappedTest {
                 Collections.emptyList()
             ),
             Matchers.emptyIterable()
+        );
+    }
+
+    @Test
+    public void string() {
+        MatcherAssert.assertThat(
+            "Can't convert to string",
+            new Mapped<Integer, Integer>(
+                x -> x * 2,
+                Arrays.asList(1, 2, 3)
+            ).toString(),
+            Matchers.equalTo("2, 4, 6")
+        );
+    }
+
+    @Test
+    public void transformsEndlessCollection() {
+        MatcherAssert.assertThat(
+            new Mapped<>(
+                String::trim,
+                new AbstractCollection<String>() {
+                    @Override
+                    public Iterator<String> iterator() {
+                        return new Endless<>("something");
+                    }
+                    @Override
+                    public int size() {
+                        return 1;
+                    }
+                }
+            ).size(),
+            Matchers.equalTo(1)
         );
     }
 

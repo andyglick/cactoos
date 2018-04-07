@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ package org.cactoos.time;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import org.hamcrest.MatcherAssert;
@@ -43,29 +44,26 @@ import org.junit.Test;
 public class ZonedDateTimeOfTest {
 
     @Test
-    public final void testParsingIsoFormattedStringToZonedDateTime()
-        throws Exception {
+    public final void testParsingIsoFormattedStringToZonedDateTime() {
         MatcherAssert.assertThat(
             "Can't parse a ZonedDateTime with default/ISO format.",
-            new ZonedDateTimeOf(
-            "2017-12-13T14:15:16.000000017+01:00[Europe/Berlin]"
-            ).value(),
-            Matchers.is(
+            new ZonedDateTimeOf("2017-12-13T14:15:16.000000017+01:00").value(),
+            Matchers.equalTo(
                 ZonedDateTime.of(
-                2017, 12, 13, 14, 15, 16, 17, ZoneId.of("Europe/Berlin")
+                    2017, 12, 13, 14, 15, 16, 17,
+                    ZoneId.ofOffset("", ZoneOffset.ofHours(1))
                 )
             )
         );
     }
 
     @Test
-    public final void testParsingFormattedStringWithZoneToZonedDateTime()
-        throws Exception {
+    public final void testParsingFormattedStringWithZoneToZonedDateTime() {
         MatcherAssert.assertThat(
             "Can't parse a ZonedDateTime with custom format and zone.",
             new ZonedDateTimeOf(
-            "2017-12-13 14:15:16",
-            "yyyy-MM-dd HH:mm:ss",
+                "2017-12-13 14:15:16",
+                "yyyy-MM-dd HH:mm:ss",
                 ZoneId.of("Europe/Berlin")
             ).value(),
             Matchers.is(
@@ -78,12 +76,11 @@ public class ZonedDateTimeOfTest {
     }
 
     @Test
-    public final void testParsingFormattedStringWithFormatterToZonedDateTime()
-        throws Exception {
+    public final void testParsingFormattedStringWithFormatterToZonedDateTime() {
         MatcherAssert.assertThat(
             "Can't parse a ZonedDateTime with custom format and zone.",
             new ZonedDateTimeOf(
-            "2017-12-13 14:15:16",
+                "2017-12-13 14:15:16",
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                     .withZone(ZoneId.of("Europe/Berlin"))
             ).value(),

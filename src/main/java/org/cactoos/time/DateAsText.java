@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,30 +23,34 @@
  */
 package org.cactoos.time;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Locale;
 import org.cactoos.Text;
-import org.cactoos.scalar.UncheckedScalar;
-import org.cactoos.text.UncheckedText;
 
 /**
- * Formatter for date instances.
+ * Formatter for {@link Date} instances.
  * @author Sven Diedrichsen (sven.diedrichsen@gmail.com)
  * @version $Id$
- * @since 1.0
+ * @since 0.27
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public class DateAsText implements Text {
+public final class DateAsText implements Text {
+
     /**
-     * Scalar carrying the formatted date.
+     * Internal text carrying the formatted date.
      */
-    private final UncheckedScalar<String> formatted;
+    private final ZonedDateTimeAsText text;
+
+    /**
+     * Formats current time using the ISO format.
+     */
+    public DateAsText() {
+        this(System.currentTimeMillis());
+    }
 
     /**
      * Formats the milliseconds using the ISO format.
@@ -54,10 +58,8 @@ public class DateAsText implements Text {
      */
     public DateAsText(final long milliseconds) {
         this(
-            ZonedDateTime.ofInstant(
-                Instant.ofEpochMilli(milliseconds), ZoneId.of("UTC")
-            ),
-            DateTimeFormatter.ISO_DATE_TIME
+            Date.from(Instant.ofEpochMilli(milliseconds)),
+            new Iso().get()
         );
     }
 
@@ -68,10 +70,7 @@ public class DateAsText implements Text {
      */
     public DateAsText(final long milliseconds, final String format) {
         this(
-            ZonedDateTime.ofInstant(
-                Instant.ofEpochMilli(milliseconds), ZoneId.of("UTC")
-            ),
-            format,
+            Date.from(Instant.ofEpochMilli(milliseconds)), format,
             Locale.getDefault(Locale.Category.FORMAT)
         );
     }
@@ -85,9 +84,7 @@ public class DateAsText implements Text {
     public DateAsText(final long milliseconds, final String format,
         final Locale locale) {
         this(
-            ZonedDateTime.ofInstant(
-                Instant.ofEpochMilli(milliseconds), ZoneId.of("UTC")
-            ),
+            Date.from(Instant.ofEpochMilli(milliseconds)),
             DateTimeFormatter.ofPattern(format, locale)
         );
     }
@@ -97,10 +94,7 @@ public class DateAsText implements Text {
      * @param date The date to format.
      */
     public DateAsText(final Date date) {
-        this(
-            ZonedDateTime.ofInstant(date.toInstant(), ZoneId.of("UTC")),
-            DateTimeFormatter.ISO_DATE_TIME
-        );
+        this(date, new Iso().get());
     }
 
     /**
@@ -110,13 +104,7 @@ public class DateAsText implements Text {
      * @param format The format to use.
      */
     public DateAsText(final Date date, final String format) {
-        this(
-            ZonedDateTime.ofInstant(date.toInstant(), ZoneId.of("UTC")),
-            DateTimeFormatter.ofPattern(
-                format,
-                Locale.getDefault(Locale.Category.FORMAT)
-            )
-        );
+        this(date, format, Locale.getDefault(Locale.Category.FORMAT));
     }
 
     /**
@@ -128,61 +116,25 @@ public class DateAsText implements Text {
      */
     public DateAsText(final Date date, final String format,
         final Locale locale) {
-        this(
-            ZonedDateTime.ofInstant(date.toInstant(), ZoneId.of("UTC")),
-            DateTimeFormatter.ofPattern(format, locale)
-        );
-    }
-
-    /**
-     * Formats date using ISO date time format.
-     * @param date The date to format.
-     */
-    public DateAsText(final TemporalAccessor date) {
-        this(date, DateTimeFormatter.ISO_DATE_TIME);
-    }
-
-    /**
-     * Formats date using provided date time format string using default locale.
-     * @param date The date to format.
-     * @param format The format to use.
-     */
-    public DateAsText(final TemporalAccessor date, final String format) {
-        this(date, format, Locale.getDefault(Locale.Category.FORMAT));
-    }
-
-    /**
-     * Formats the date using the provided format string using the provided
-     * locale.
-     * @param date The date to format.
-     * @param format The format string to use.
-     * @param locale The locale to use.
-     */
-    public DateAsText(final TemporalAccessor date, final String format,
-        final Locale locale) {
         this(date, DateTimeFormatter.ofPattern(format, locale));
     }
 
     /**
-     * Formats the date using the provided formatter.
+     * Formats the date using the format and locale using the system default
+     * zone.
      * @param date The date to format.
      * @param formatter The formatter to use.
      */
-    public DateAsText(final TemporalAccessor date,
-        final DateTimeFormatter formatter) {
-        this.formatted = new UncheckedScalar<>(
-            () -> formatter.format(date)
+    public DateAsText(final Date date, final DateTimeFormatter formatter) {
+        this.text = new ZonedDateTimeAsText(
+            ZonedDateTime.ofInstant(date.toInstant(), ZoneId.of("UTC")),
+            formatter
         );
     }
 
     @Override
-    public final String asString() throws IOException {
-        return this.formatted.value();
-    }
-
-    @Override
-    public final int compareTo(final Text text) {
-        return new UncheckedText(this).compareTo(text);
+    public String asString() {
+        return this.text.asString();
     }
 
 }

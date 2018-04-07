@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ import org.cactoos.Text;
 /**
  * Text that is thread-safe.
  *
- * <p>There is no thread-safety guarantee.
+ * <p>Objects of this class are thread safe.</p>
  *
  * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
@@ -69,13 +69,6 @@ public final class SyncText implements Text {
     public String asString() throws IOException {
         synchronized (this.lock) {
             return this.origin.asString();
-        }
-    }
-
-    @Override
-    public int compareTo(final Text text) {
-        synchronized (this.lock) {
-            return new UncheckedText(this).compareTo(text);
         }
     }
 

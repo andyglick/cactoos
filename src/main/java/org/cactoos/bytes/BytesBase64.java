@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,17 +41,34 @@ public final class BytesBase64 implements Bytes {
      * Origin bytes.
      */
     private final Bytes origin;
+    /**
+     * The encoder to use.
+     */
+    private final Base64.Encoder encoder;
 
     /**
-     * Ctor.
+     * Ctor uses a RFC4648 {@link java.util.Base64.Encoder}.
+     *
      * @param origin Origin bytes.
      */
     public BytesBase64(final Bytes origin) {
+        this(origin, Base64.getEncoder());
+    }
+
+    /**
+     * Ctor.
+     *
+     * @param origin Origin bytes.
+     * @param enc The encoder to use.
+     */
+    public BytesBase64(final Bytes origin, final Base64.Encoder enc) {
         this.origin = origin;
+        this.encoder = enc;
     }
 
     @Override
     public byte[] asBytes() throws IOException {
-        return Base64.getEncoder().encode(this.origin.asBytes());
+        return this.encoder.encode(this.origin.asBytes());
     }
+
 }

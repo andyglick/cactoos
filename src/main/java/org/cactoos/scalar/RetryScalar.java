@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,18 @@ import org.cactoos.func.RetryFunc;
 
 /**
  * Func that will try a few times before throwing an exception.
+ *
+ * <pre>
+ * new RetryScalar<>(
+ *     () -> {
+ *         if (new SecureRandom().nextDouble() > 0.3d) {
+ *         throw new IllegalArgumentException("May happen");
+ *       }
+ *       return 0;
+ *     },
+ *     5
+ * ).value() // will try to run 5 times before throwing an exception
+ * </pre>
  *
  * <p>There is no thread-safety guarantee.
  *

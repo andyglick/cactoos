@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,10 +30,10 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.cactoos.Text;
-import org.cactoos.TextHasString;
-import org.cactoos.func.MatcherOf;
 import org.cactoos.iterable.Endless;
 import org.cactoos.iterable.Limited;
+import org.cactoos.matchers.MatcherOf;
+import org.cactoos.matchers.TextHasString;
 import org.cactoos.text.JoinedText;
 import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
@@ -192,6 +192,21 @@ public final class BytesOfTest {
                         "\tat org.cactoos.io.BytesOfTest"
                     )
                 )
+            )
+        );
+    }
+
+    @Test
+    public void printsStackTraceFromArray() {
+        MatcherAssert.assertThat(
+            "Can't print exception stacktrace from array",
+            new TextOf(
+                new BytesOf(
+                    new IOException("").getStackTrace()
+                )
+            ),
+            new TextHasString(
+                Matchers.containsString("org.cactoos.io.BytesOfTest")
             )
         );
     }

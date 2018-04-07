@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,8 @@ import org.cactoos.func.UncheckedFunc;
  * @param <T> Range value type
  * @since 1.0
  */
-public class RangeOf<T extends Comparable<T>> extends IterableEnvelope<T> {
+public final class
+    RangeOf<T extends Comparable<T>> extends IterableEnvelope<T> {
 
     /**
      * Ctor.

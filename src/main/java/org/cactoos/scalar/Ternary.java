@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,15 @@ import org.cactoos.Scalar;
  * {@link Exception}. This may not be convenient in many cases. To make
  * it more convenient and get rid of the checked exception you can
  * use {@link UncheckedScalar} or {@link IoCheckedScalar} decorators.</p>
+ *
+ * <pre>
+ * new Ternary<>(
+ *     5,
+ *     input -> input > 3,
+ *     input -> input = 8,
+ *     input -> input = 2
+ * ).value() // will be equal to 8
+ * </pre>
  *
  * @author Vseslav Sekorin (vssekorin@gmail.com)
  * @version $Id$

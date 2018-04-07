@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,13 @@ import org.cactoos.Text;
 import org.cactoos.text.TextOf;
 
 /**
- * Text as {@link Float}.
+ * Text as {@link Number}.
+ *
+ * <pre>
+ * long value = new NumberOf("186789235425346").longValue();
+ * int value = new NumberOf("1867892354").intValue();
+ * double value = new NumberOf("185.65156465123").doubleValue();
+ * </pre>
  *
  * <p>There is no thread-safety guarantee.
  *

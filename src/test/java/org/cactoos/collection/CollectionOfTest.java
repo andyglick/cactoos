@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,6 +61,28 @@ public final class CollectionOfTest {
             "Can't build a collection from iterator",
             new CollectionOf<Integer>(new ListOf<>(1, 2, 0, -1).iterator()),
             Matchers.hasItem(-1)
+        );
+    }
+
+    @Test
+    public void testToString() throws Exception {
+        MatcherAssert.assertThat(
+            "Wrong toString output. Expected \"[1, 2, 0, -1]\".",
+            new CollectionOf<Integer>(
+                new ListOf<>(1, 2, 0, -1)
+            ).toString(),
+            Matchers.equalTo("[1, 2, 0, -1]")
+        );
+    }
+
+    @Test
+    public void testToStringEmpty() throws Exception {
+        MatcherAssert.assertThat(
+            "Wrong toString output. Expected \"[]\".",
+            new CollectionOf<Integer>(
+                new ListOf<>()
+            ).toString(),
+            Matchers.equalTo("[]")
         );
     }
 

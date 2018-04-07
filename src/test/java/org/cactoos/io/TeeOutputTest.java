@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,8 @@ package org.cactoos.io;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
-import org.cactoos.TextHasString;
-import org.cactoos.func.MatcherOf;
+import org.cactoos.matchers.MatcherOf;
+import org.cactoos.matchers.TextHasString;
 import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -45,15 +45,150 @@ public final class TeeOutputTest {
     public void copiesContent() {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final ByteArrayOutputStream copy = new ByteArrayOutputStream();
-        final String content = "Hello, товарищ!";
         MatcherAssert.assertThat(
             "Can't copy Output to Output and return Input",
             new TextOf(
                 new TeeInput(
-                    new InputOf(content),
+                    new InputOf("Hello, товарищ!"),
                     new TeeOutput(
                         new OutputTo(baos),
                         new OutputTo(copy)
+                    )
+                )
+            ),
+            new TextHasString(
+                new MatcherOf<>(
+                    str -> {
+                        return new String(
+                            copy.toByteArray(), StandardCharsets.UTF_8
+                        ).equals(str);
+                    }
+                )
+            )
+        );
+    }
+
+    @Test
+    public void copiesWithWriter() {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream copy = new ByteArrayOutputStream();
+        MatcherAssert.assertThat(
+            "Can't copy Output with writer",
+            new TextOf(
+                new TeeInput(
+                    new InputOf("Hello, товарищ! writer"),
+                    new TeeOutput(
+                        new OutputTo(baos),
+                        new WriterTo(copy)
+                    )
+                )
+            ),
+            new TextHasString(
+                new MatcherOf<>(
+                    str -> {
+                        return new String(
+                            copy.toByteArray(), StandardCharsets.UTF_8
+                        ).equals(str);
+                    }
+                )
+            )
+        );
+    }
+
+    @Test
+    public void copiesWithWriterAndCharset() {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream copy = new ByteArrayOutputStream();
+        MatcherAssert.assertThat(
+            "Can't copy Output with writer and charset",
+            new TextOf(
+                new TeeInput(
+                    new InputOf("Hello, товарищ! writer and charset"),
+                    new TeeOutput(
+                        new OutputTo(baos),
+                        new WriterTo(copy),
+                        StandardCharsets.UTF_8
+                    )
+                )
+            ),
+            new TextHasString(
+                new MatcherOf<>(
+                    str -> {
+                        return new String(
+                            copy.toByteArray(), StandardCharsets.UTF_8
+                        ).equals(str);
+                    }
+                )
+            )
+        );
+    }
+
+    @Test
+    public void copiesWithPath() throws Exception {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final TempFile file = new TempFile();
+        MatcherAssert.assertThat(
+            "Can't copy Output with path",
+            new TextOf(
+                new TeeInput(
+                    new InputOf("Hello, товарищ! with path"),
+                    new TeeOutput(
+                        new OutputTo(baos),
+                        file.value()
+                    )
+                )
+            ),
+            new TextHasString(
+                new MatcherOf<>(
+                    str -> {
+                        return new String(
+                            new TextOf(file.value()).asString()
+                        ).equals(str);
+                    }
+                )
+            )
+        );
+    }
+
+    @Test
+    public void copiesWithFile() throws Exception {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final TempFile file = new TempFile();
+        MatcherAssert.assertThat(
+            "Can't copy Output with file",
+            new TextOf(
+                new TeeInput(
+                    new InputOf("Hello, товарищ! with file"),
+                    new TeeOutput(
+                        new OutputTo(baos),
+                        file.value().toFile()
+                    )
+                )
+            ),
+            new TextHasString(
+                new MatcherOf<>(
+                    str -> {
+                        return new String(
+                            new TextOf(file.value()).asString()
+                        ).equals(str);
+                    }
+                )
+            )
+        );
+    }
+
+    @Test
+    public void copiesWithOutputStream() {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream copy = new ByteArrayOutputStream();
+        MatcherAssert.assertThat(
+            "Can't copy Output with output stream",
+            new TextOf(
+                new TeeInput(
+                    new InputOf("Hello, товарищ! with output stream"),
+                    new TeeOutput(
+                        new OutputTo(baos),
+                        copy
                     )
                 )
             ),

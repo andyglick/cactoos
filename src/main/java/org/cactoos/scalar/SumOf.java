@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,11 @@
  */
 package org.cactoos.scalar;
 
-import java.util.Iterator;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import org.cactoos.Scalar;
+import org.cactoos.iterable.IterableOf;
+import org.cactoos.iterable.Mapped;
 
 /**
  * Int total of numbers.
@@ -69,31 +72,7 @@ public final class SumOf extends NumberEnvelope {
      * @since 0.22
      */
     public SumOf(final Integer... src) {
-        super(() -> {
-            long sum = 0L;
-            for (final int val : src) {
-                sum += (long) val;
-            }
-            return sum;
-        }, () -> {
-            int sum = 0;
-            for (final int val : src) {
-                sum += val;
-            }
-            return sum;
-        }, () -> {
-            float sum = 0.0f;
-            for (final int val : src) {
-                sum += (float) val;
-            }
-            return sum;
-        }, () -> {
-            double sum = 0.0d;
-            for (final int val : src) {
-                sum += (double) val;
-            }
-            return sum;
-        });
+        this(new IterableOf<>(src));
     }
 
     /**
@@ -102,31 +81,7 @@ public final class SumOf extends NumberEnvelope {
      * @since 0.22
      */
     public SumOf(final Long... src) {
-        super(() -> {
-            long sum = 0L;
-            for (final long val : src) {
-                sum += val;
-            }
-            return sum;
-        }, () -> {
-            int sum = 0;
-            for (final long val : src) {
-                sum += (int) val;
-            }
-            return sum;
-        }, () -> {
-            float sum = 0.0f;
-            for (final long val : src) {
-                sum += (float) val;
-            }
-            return sum;
-        }, () -> {
-            double sum = 0.0d;
-            for (final long val : src) {
-                sum += (double) val;
-            }
-            return sum;
-        });
+        this(new IterableOf<>(src));
     }
 
     /**
@@ -135,31 +90,7 @@ public final class SumOf extends NumberEnvelope {
      * @since 0.22
      */
     public SumOf(final Double... src) {
-        super(() -> {
-            long sum = 0L;
-            for (final double val : src) {
-                sum += (long) val;
-            }
-            return sum;
-        }, () -> {
-            int sum = 0;
-            for (final double val : src) {
-                sum += (int) val;
-            }
-            return sum;
-        }, () -> {
-            float sum = 0.0f;
-            for (final double val : src) {
-                sum += (float) val;
-            }
-            return sum;
-        }, () -> {
-            double sum = 0.0d;
-            for (final double val : src) {
-                sum += val;
-            }
-            return sum;
-        });
+        this(new IterableOf<>(src));
     }
 
     /**
@@ -168,68 +99,22 @@ public final class SumOf extends NumberEnvelope {
      * @since 0.22
      */
     public SumOf(final Float... src) {
-        super(() -> {
-            long sum = 0L;
-            for (final float val : src) {
-                sum += (long) val;
-            }
-            return sum;
-        }, () -> {
-            int sum = 0;
-            for (final float val : src) {
-                sum += (int) val;
-            }
-            return sum;
-        }, () -> {
-            float sum = 0.0f;
-            for (final float val : src) {
-                sum += val;
-            }
-            return sum;
-        }, () -> {
-            double sum = 0.0d;
-            for (final float val : src) {
-                sum += (double) val;
-            }
-            return sum;
-        });
+        this(new IterableOf<>(src));
     }
 
     /**
      * Ctor.
      * @param src The iterable
-     * @checkstyle ExecutableStatementCountCheck (150 lines)
      */
     public SumOf(final Iterable<Number> src) {
-        super(() -> {
-            final Iterator<Number> numbers = src.iterator();
-            long sum = 0L;
-            while (numbers.hasNext()) {
-                sum += numbers.next().longValue();
-            }
-            return sum;
-        }, () -> {
-            final Iterator<Number> numbers = src.iterator();
-            int sum = 0;
-            while (numbers.hasNext()) {
-                sum += numbers.next().intValue();
-            }
-            return sum;
-        }, () -> {
-            final Iterator<Number> numbers = src.iterator();
-            float sum = 0.0f;
-            while (numbers.hasNext()) {
-                sum += numbers.next().floatValue();
-            }
-            return sum;
-        }, () -> {
-            final Iterator<Number> numbers = src.iterator();
-            double sum = 0.0d;
-            while (numbers.hasNext()) {
-                sum += numbers.next().doubleValue();
-            }
-            return sum;
-        });
+        super(() -> new Reduced<>(
+            BigDecimal.ZERO,
+            (sum, value) -> sum.add(value, MathContext.DECIMAL128),
+            new Mapped<>(
+                number -> BigDecimal.valueOf(number.doubleValue()),
+                src
+            )).value().doubleValue()
+        );
     }
 
 }

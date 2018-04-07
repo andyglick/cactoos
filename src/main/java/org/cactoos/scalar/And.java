@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,6 @@
  */
 package org.cactoos.scalar;
 
-import java.util.Iterator;
 import org.cactoos.Func;
 import org.cactoos.Proc;
 import org.cactoos.Scalar;
@@ -39,10 +38,12 @@ import org.cactoos.iterable.Mapped;
  * {@link java.util.stream.Stream#forEach(java.util.function.Consumer)}
  * works:</p>
  *
- * <pre> new And(
- *   new IterableOf("Mary", "John", "William", "Napkin"),
- *   name -> System.out.printf("The name: %s\n", name)
- * ).value();</pre>
+ * <pre>
+ * new And(
+ *    new ProcOf<>(input -> System.out.printf("\'%s\' ", input) ),
+ *    new IterableOf<>("Mary", "John", "William", "Napkin")
+ * ).value(); // will print 'Mary' 'John' 'William' 'Napkin' to standard output
+ * </pre>
  *
  * <p>This class implements {@link Scalar}, which throws a checked
  * {@link Exception}. This may not be convenient in many cases. To make
@@ -93,30 +94,8 @@ public final class And implements Scalar<Boolean> {
      * @param <X> Type of items in the iterable
      * @since 0.24
      */
-    public <X> And(final Proc<X> proc, final Iterator<X> src) {
-        this(new FuncOf<>(proc, true), src);
-    }
-
-    /**
-     * Ctor.
-     * @param src The iterable
-     * @param proc Proc to use
-     * @param <X> Type of items in the iterable
-     * @since 0.24
-     */
     public <X> And(final Proc<X> proc, final Iterable<X> src) {
         this(new FuncOf<>(proc, true), src);
-    }
-
-    /**
-     * Ctor.
-     * @param src The iterable
-     * @param func Func to map
-     * @param <X> Type of items in the iterable
-     * @since 0.24
-     */
-    public <X> And(final Func<X, Boolean> func, final Iterator<X> src) {
-        this(func, new IterableOf<>(src));
     }
 
     /**
@@ -140,15 +119,6 @@ public final class And implements Scalar<Boolean> {
      */
     @SafeVarargs
     public And(final Scalar<Boolean>... src) {
-        this(new IterableOf<>(src));
-    }
-
-    /**
-     * Ctor.
-     * @param src The iterable
-     * @since 0.24
-     */
-    public And(final Iterator<Scalar<Boolean>> src) {
         this(new IterableOf<>(src));
     }
 

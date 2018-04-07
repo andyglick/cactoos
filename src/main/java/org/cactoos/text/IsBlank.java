@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,9 +53,7 @@ public final class IsBlank implements Scalar<Boolean> {
 
     @Override
     public Boolean value() throws IOException {
-        return !this.origin.asString().chars()
-            .filter(c -> !Character.isWhitespace(c))
-            .findFirst()
-            .isPresent();
+        return this.origin.asString().chars()
+            .allMatch(Character::isWhitespace);
     }
 }

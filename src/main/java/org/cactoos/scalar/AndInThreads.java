@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@
 package org.cactoos.scalar;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,8 +45,8 @@ import org.cactoos.iterable.Mapped;
  * works:</p>
  *
  * <pre> new AndInThreads(
- *   new IterableOf("Mary", "John", "William", "Napkin"),
- *   name -> System.out.printf("The name: %s\n", name)
+ *   name -> System.out.println("The name: %s\n", name),
+ *   new IterableOf&lt;&gt;("Mary", "John", "William", "Napkin")
  * ).value();</pre>
  *
  * <p>This class implements {@link Scalar}, which throws a checked
@@ -108,29 +107,8 @@ public final class AndInThreads implements Scalar<Boolean> {
      * @param proc Proc to use
      * @param <X> Type of items in the iterable
      */
-    public <X> AndInThreads(final Proc<X> proc, final Iterator<X> src) {
-        this(new FuncOf<>(proc, true), src);
-    }
-
-    /**
-     * Ctor.
-     * @param src The iterable
-     * @param proc Proc to use
-     * @param <X> Type of items in the iterable
-     */
     public <X> AndInThreads(final Proc<X> proc, final Iterable<X> src) {
         this(new FuncOf<>(proc, true), src);
-    }
-
-    /**
-     * Ctor.
-     * @param src The iterable
-     * @param func Func to map
-     * @param <X> Type of items in the iterable
-     */
-    public <X> AndInThreads(final Func<X, Boolean> func,
-        final Iterator<X> src) {
-        this(func, new IterableOf<>(src));
     }
 
     /**
@@ -154,15 +132,6 @@ public final class AndInThreads implements Scalar<Boolean> {
      */
     @SafeVarargs
     public AndInThreads(final Scalar<Boolean>... src) {
-        this(new IterableOf<>(src));
-    }
-
-    /**
-     * Ctor.
-     * @param src The iterable
-     * @since 0.24
-     */
-    public AndInThreads(final Iterator<Scalar<Boolean>> src) {
         this(new IterableOf<>(src));
     }
 
@@ -208,32 +177,8 @@ public final class AndInThreads implements Scalar<Boolean> {
      * @param <X> Type of items in the iterable
      */
     public <X> AndInThreads(final ExecutorService svc,
-        final Proc<X> proc, final Iterator<X> src) {
-        this(svc, new FuncOf<>(proc, true), src);
-    }
-
-    /**
-     * Ctor.
-     * @param svc Executable service to run thread in
-     * @param src The iterable
-     * @param proc Proc to use
-     * @param <X> Type of items in the iterable
-     */
-    public <X> AndInThreads(final ExecutorService svc,
         final Proc<X> proc, final Iterable<X> src) {
         this(svc, new FuncOf<>(proc, true), src);
-    }
-
-    /**
-     * Ctor.
-     * @param svc Executable service to run thread in
-     * @param src The iterable
-     * @param func Func to map
-     * @param <X> Type of items in the iterable
-     */
-    public <X> AndInThreads(final ExecutorService svc,
-        final Func<X, Boolean> func, final Iterator<X> src) {
-        this(svc, func, new IterableOf<>(src));
     }
 
     /**
@@ -261,16 +206,6 @@ public final class AndInThreads implements Scalar<Boolean> {
     @SafeVarargs
     public AndInThreads(final ExecutorService svc,
         final Scalar<Boolean>... src) {
-        this(svc, new IterableOf<>(src));
-    }
-
-    /**
-     * Ctor.
-     * @param svc Executable service to run thread in
-     * @param src The iterable
-     */
-    public AndInThreads(final ExecutorService svc,
-        final Iterator<Scalar<Boolean>> src) {
         this(svc, new IterableOf<>(src));
     }
 

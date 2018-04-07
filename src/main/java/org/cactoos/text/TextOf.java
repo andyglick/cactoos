@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@ package org.cactoos.text;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
@@ -210,11 +212,60 @@ public final class TextOf implements Text {
 
     /**
      * Ctor.
-     *
      * @param error The exception to serialize
      */
     public TextOf(final Throwable error) {
         this(new BytesOf(error));
+    }
+
+    /**
+     * Ctor.
+     * @param error The exception to serialize
+     * @param charset Charset
+     * @since 0.29
+     */
+    public TextOf(final Throwable error, final Charset charset) {
+        this(new BytesOf(error, charset));
+    }
+
+    /**
+     * Ctor.
+     * @param error The exception to serialize
+     * @param charset Charset
+     * @since 0.29
+     */
+    public TextOf(final Throwable error, final CharSequence charset) {
+        this(new BytesOf(error, charset));
+    }
+
+    /**
+     * Ctor.
+     * @param strace The stacktrace to serialize
+     * @since 0.29
+     */
+    public TextOf(final StackTraceElement... strace) {
+        this(new BytesOf(strace));
+    }
+
+    /**
+     * Ctor.
+     * @param strace The stacktrace to serialize
+     * @param charset Charset
+     * @since 0.29
+     */
+    public TextOf(final StackTraceElement[] strace, final Charset charset) {
+        this(new BytesOf(strace, charset));
+    }
+
+    /**
+     * Ctor.
+     * @param strace The stacktrace to serialize
+     * @param charset Charset
+     * @since 0.29
+     */
+    public TextOf(final StackTraceElement[] strace,
+        final CharSequence charset) {
+        this(new BytesOf(strace, charset));
     }
 
     /**
@@ -293,6 +344,15 @@ public final class TextOf implements Text {
 
     /**
      * Ctor.
+     * @param input The InputStream where the text is read from
+     * @since 0.21
+     */
+    public TextOf(final InputStream input) {
+        this(new InputOf(new InputStreamReader(input)));
+    }
+
+    /**
+     * Ctor.
      *
      * @param scalar The Scalar of String
      */
@@ -306,8 +366,8 @@ public final class TextOf implements Text {
     }
 
     @Override
-    public int compareTo(final Text text) {
-        return new UncheckedText(this).compareTo(text);
+    public String toString() {
+        return new UncheckedText(this).asString();
     }
 
 }

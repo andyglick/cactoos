@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Yegor Bugayenko
+ * Copyright (c) 2017-2018 Yegor Bugayenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import org.cactoos.Scalar;
 import org.cactoos.scalar.UncheckedScalar;
+import org.cactoos.text.TextOf;
 
 /**
  * Map envelope.
@@ -40,9 +41,15 @@ import org.cactoos.scalar.UncheckedScalar;
  * @param <Y> Type of value
  * @see StickyMap
  * @since 0.24
+ * @checkstyle AbstractClassNameCheck (500 lines)
  */
-@SuppressWarnings("PMD.TooManyMethods")
-public class MapEnvelope<X, Y> implements Map<X, Y> {
+@SuppressWarnings(
+    {
+        "PMD.TooManyMethods",
+        "PMD.AbstractNaming"
+    }
+)
+public abstract class MapEnvelope<X, Y> implements Map<X, Y> {
 
     /**
      * The map.
@@ -125,4 +132,12 @@ public class MapEnvelope<X, Y> implements Map<X, Y> {
         return this.map.value().entrySet();
     }
 
+    @Override
+    public final String toString() {
+        return new StringBuilder()
+            .append('{')
+            .append(new TextOf(this.entrySet()).toString())
+            .append('}')
+            .toString();
+    }
 }
